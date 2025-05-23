@@ -1,0 +1,36 @@
+---
+name: main
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        go: ["1.22", "1.21"]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.1.4
+
+      - name: Go installation
+        uses: actions/setup-go@v5.0.1
+        with:
+          go-version: ${{ matrix.go }}
+
+      - name: Go dependencies installation
+        run: go get -d ./...
+
+      - name: Build
+        run: go build ./...
+
+      - name: Test
+        run: go test ./...
+
+      - name: Vet
+        run: go vet ./...
